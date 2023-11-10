@@ -1,92 +1,68 @@
-function mouseover(event) {
-    const imagenGrande = document.createElement("img");
-    const xOff = 5 + event.pageX;
-    const yOff = 5 + event.pageY;
-    imagenGrande.src = this.src;
-    imagenGrande.style.width = "130px";
-    imagenGrande.style.position = "absolute";
-    imagenGrande.style.top = yOff + "px";
-    imagenGrande.style.left = xOff + "px";
-    imagenGrande.classList.add("imagenGrande");
-    document.body.appendChild(imagenGrande);
-  }
-  function mouseout() {
-    const ultimaImagenAgregada = document.querySelector(".imagenGrande");
-    ultimaImagenAgregada.remove();
-  }
-  function editarLibro() {
-    let padreRow = this.parentNode.parentNode;
-    let contenedor = document.createElement("div");
-    let titulo = document.createElement("h1");
-    let imagenOG = padreRow.childNodes[3].childNodes[1];
-    let imagenNueva = document.createElement("img");
-    let tituloLibro = padreRow.childNodes[5].childNodes[0].innerHTML;
-    let artista = padreRow.childNodes[7].innerHTML;
-    let anio = padreRow.childNodes[9].innerHTML;
-    let genero = padreRow.childNodes[11].innerHTML;
-    let tituloLibroInput = document.createElement("input");
-    let artistaInput = document.createElement("input");
-    let anioInput = document.createElement("input");
-    let generoInput = document.createElement("input");
-    let formulario = document.createElement("form");
-    let botonEnviar = document.createElement("button");
-    let botonCancelar = document.createElement("button");
-    formulario.id = "formularioEditar";
-    botonEnviar.innerHTML = "Guardar cambios";
-    botonCancelar.innerHTML = "Cancelar";
-    titulo.innerHTML = "Editar";
-    imagenNueva.src = imagenOG.src;
-    contenedor.classList.add("contenedor");
-    contenedor.appendChild(titulo);
-    contenedor.appendChild(imagenNueva);
-    tituloLibroInput.value = tituloLibro;
-    artistaInput.value = artista;
-    anioInput.value = anio;
-    generoInput.value = genero;
-    formulario.appendChild(tituloLibroInput);
-    formulario.appendChild(document.createElement("br"));
-    formulario.appendChild(artistaInput);
-    formulario.appendChild(document.createElement("br"));
-    formulario.appendChild(anioInput);
-    formulario.appendChild(document.createElement("br"));
-    formulario.appendChild(generoInput);
-    formulario.appendChild(document.createElement("br"));
-    formulario.appendChild(botonCancelar);
-    formulario.appendChild(botonEnviar);
-    contenedor.appendChild(formulario);
-    document.body.appendChild(contenedor);
-    botonEnviar.onclick = function () {
-      padreRow.childNodes[5].childNodes[0].innerHTML = tituloLibroInput.value;
-      padreRow.childNodes[7].innerHTML = generoInput.value;
-      padreRow.childNodes[9].innerHTML = artistaInput.value;
-      padreRow.childNodes[11].innerHTML = anioInput.value;
-      contenedor.remove();
-    };
-    botonCancelar.onclick = function () {
-      contenedor.remove();
-    };
-  }
-  
-  var imagenesMiniatura = document.querySelectorAll(".imgMiniatura");
-  for (let imagenMiniatura of imagenesMiniatura) {
-    imagenMiniatura.addEventListener("mouseover", mouseover);
-    imagenMiniatura.addEventListener("mouseout", mouseout);
-  }
-  const registros = document.querySelectorAll(".Genero");
-  var filtrado = document.getElementById("filtro");
-  var formularioFiltrar = document.getElementById("formulario");
-  formularioFiltrar.onsubmit = function (event) {
-    event.preventDefault();
-    const seleccionFiltro = filtrado.options[filtrado.selectedIndex].text;
-    for (let registroIndividual of registros) {
-      if (registroIndividual.innerHTML === seleccionFiltro) {
-      } else {
-        registroIndividual.parentNode.style.display = "none";
-      }
+const mouseover = (event) => {
+  const {pageX, pageY, target: { src }} = event;
+  const imgFlotante = document.createElement("img");
+  imgFlotante.src = src;
+  imgFlotante.style.width = "200px";
+  imgFlotante.style.position = "absolute";
+  imgFlotante.style.top = `${pageY}px`;
+  imgFlotante.style.left = `${25 + pageX}px`;
+  imgFlotante.classList.add("imgFlotante");
+  document.body.appendChild(imgFlotante);
+};
+
+const mouseout = () => {
+const ultimaImagenAgregada = document.querySelector(".imgFlotante");
+  ultimaImagenAgregada.remove();
+};
+
+const imagenes = document.querySelectorAll(".imagen");
+imagenes.forEach((img) => {
+  img.addEventListener("mouseover", mouseover);
+  img.addEventListener("mouseout", mouseout);
+});
+
+const editButtons = document.querySelectorAll('button');
+
+editButtons.forEach(function(button) {
+  button.addEventListener('click', function() {
+    const row = button.parentElement.parentElement;
+    const image = row.querySelector('img').src;
+    const title = row.querySelectorAll('td')[2].textContent;
+    const artist = row.querySelectorAll('td')[3].textContent;
+    const year = row.querySelectorAll('td')[4].textContent;
+    const genre = row.querySelectorAll('td')[5].textContent;
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.innerHTML = `
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2> Editar </h2>
+        <img src="${image}">
+        <p> ${title} </p>
+        <p> ${artist}</p>
+        <p> ${year} </p>
+        <p> ${genre} </p>
+      </div>
+    `;
+    const closeButton = modal.querySelector('.close');
+    closeButton.addEventListener('click', function() {
+      modal.remove();
+    });
+
+    document.body.appendChild(modal);
+  });
+});
+
+
+const elements = document.querySelectorAll(".genero");
+var filter = document.getElementById("filtro");
+var form = document.getElementById("formulario");
+form.onsubmit = function () {
+  const selectedFilter = filter.options[filter.selectedIndex].text;
+  for (let element of elements) {
+    if (element.innerHTML === selectedFilter) {
+    } else {
+      element.parentNode.style.display = "none";
     }
-  };
-  
-  var botonesEditar = document.querySelectorAll(".editar");
-  for (let boton of botonesEditar) {
-    boton.addEventListener("click", editarLibro);
   }
+};
